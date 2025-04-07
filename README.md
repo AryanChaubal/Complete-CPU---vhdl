@@ -12,19 +12,59 @@ Perfect for hardware experimentation, simulation, and running custom assembly pr
 
 ---
 
-## 🧩 Components
+## 🧩 Architecture Highlights
 
-### ✅ Reset Circuit
-A synchronous reset module ensures stable startup by holding the CPU in an initialization state for a fixed number of clock cycles. This allows system signals to stabilize before instruction execution begins.
+The CPU is built around a rich set of low-level hardware components, each designed for flexibility and reusability.
 
-### ✅ Datapath
-Handles the movement and processing of data across registers, the ALU, and memory interfaces. Fully modular and easy to expand.
+### 🔁 Registers & State Control
 
-### ✅ Control Unit
-Finite State Machine (FSM)-based controller that manages CPU operation cycle-by-cycle based on opcode decoding.
+- `register32`: 32-bit general-purpose register with load, clear, and clock control  
+- `pc`: Program Counter with increment, load, and clear support  
+- **Instruction Register**: 32-bit IR to hold the currently executing instruction  
+- **Status Flags**:
+  - `Z`: Zero flag
+  - `C`: Carry-out flag
 
-### ✅ Instruction Memory
-Instruction memory is configured via a `.mif` file (Memory Initialization File), which allows easy testing of different programs in simulation.
+---
+
+### 🧠 ALU & Arithmetic Modules
+
+- `alu`: Performs core arithmetic/logic operations (ADD, SUB, AND, OR, etc.)
+- `LZE`: Logical Zero Extender (extends immediate fields to 32 bits)
+- `UZE`: Unsigned Zero Extender
+- `RED`: Reduces 32-bit values to 8-bit addresses for memory indexing
+
+---
+
+### 📥 Multiplexers
+
+- `mux2to1`: 2-input MUX used for:
+  - Register A input (bus vs. LZE)
+  - Register B input (bus vs. LZE)
+  - Register selection (A vs. B)
+  - IM_MUX1 (Reg_A vs. UZE)
+- `mux4to1`: 4-input MUX used for:
+  - IM_MUX2: Choose between register, LZE, fixed values
+  - Final data bus selection: DATA_IN, memory, ALU output, or default zero
+
+---
+
+### 💾 Memory Module
+
+- `data_mem`: 256-word RAM
+  - `EN` and `WEN` controlled
+  - Input address via `RED` (reduced from IR)
+  - Data lines fully exposed for easy debugging
+
+---
+
+### 🔗 Signal Buses
+
+- `DATA_BUS`: Core bus for inter-module data transfer  
+- `ADDR_OUT`: Instruction address output  
+- `DATA_IN`: External data input  
+- `MEM_IN`, `MEM_OUT`: Interfaces for memory write and read  
+- `MEM_ADDR`: 8-bit address line derived from instruction reduction
 
 ---
 
