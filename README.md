@@ -48,9 +48,3 @@ The design is fully simulated using timing waveforms. You can observe:
 - Branch and jump execution
 
 Use your favorite VHDL simulation environment (ModelSim, Quartus, GHDL, etc.) to test and visualize CPU execution.
-
----
-
-## 🧠 Sample Programs
-
-This CPU supports simple assembly routines like:
